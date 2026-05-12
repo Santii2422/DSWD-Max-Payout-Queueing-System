@@ -28,7 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             SELECT id, queue_number
             FROM queue_entries
             WHERE transaction_date = ? AND status = 'waiting'
-            ORDER BY id ASC
+            ORDER BY 
+                CASE 
+                    WHEN queue_type = 'priority' THEN 0
+                    ELSE 1
+                END ASC,
+                id ASC
             LIMIT 1
         ");
         $nextQueue->bind_param("s", $today);
