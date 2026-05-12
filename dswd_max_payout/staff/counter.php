@@ -13,6 +13,7 @@ $sql = $conn->prepare("
     SELECT 
         q.id,
         q.queue_number,
+        q.queue_type,
         q.status,
         q.workflow_status,
         q.table_number,
@@ -236,6 +237,7 @@ while ($row = $result->fetch_assoc()) {
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
+            margin-left: 8px;
         }
 
         .status-badge.waiting {
@@ -256,6 +258,26 @@ while ($row = $result->fetch_assoc()) {
         .status-badge.paid {
             background: #d1fae5;
             color: #065f46;
+        }
+
+        /* PRIORITY BADGE */
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #f59e0b;
+            margin-right: 8px;
+        }
+
+        .queue-number-cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .header-controls {
@@ -321,10 +343,16 @@ while ($row = $result->fetch_assoc()) {
                                     // Determine if this row is currently being called
                                     $isServing = ($entry['status'] === 'serving');
                                     $rowClass = $isServing ? 'row-calling' : '';
+                                    $isPriority = ($entry['queue_type'] === 'priority');
                                 ?>
                                 <tr class="<?php echo $rowClass; ?>">
                                     <td>
-                                        <?php echo htmlspecialchars($entry['queue_number']); ?>
+                                        <div class="queue-number-cell">
+                                            <?php if ($isPriority): ?>
+                                                <span class="priority-badge">⭐ PRO</span>
+                                            <?php endif; ?>
+                                            <?php echo htmlspecialchars($entry['queue_number']); ?>
+                                        </div>
                                     </td>
                                     <td>
                                         <?php echo htmlspecialchars($entry['first_name'] . ', ' . $entry['last_name']); ?>
